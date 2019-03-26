@@ -1,0 +1,10 @@
+#!/bin/bash
+
+brew update                       # Fetch latest version of homebrew and formula.
+brew tap caskroom/cask            # Tap the Caskroom/Cask repository from Github using HTTPS.
+brew search virtualbox            # Searches all known Casks for a partial or exact match.
+brew cask info virtualbox         # Displays information about the given Cask
+brew cask install virtualbox      # Install the given cask.
+brew cleanup                      # For all installed or specific formulae, remove any older versions from the cellar.
+
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" #if errors with cask

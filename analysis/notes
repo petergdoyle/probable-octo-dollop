@@ -1,0 +1,21 @@
+
+Assumptions/Agreement
+definition of a DDOS attack - what is it, how to identify the attach via the log entry data points
+
+
+"Since a DDoS attack is an incredible amount of traffic sent to your server, you would see a spike
+unlike any high-traffic day including your busiest times. As a matter of fact, the ideal time for
+an attacker to strike is when you’re busy, because he can use the existing traffic as well as his
+own to help crash the server."
+
+so the technical problem would be to look for anlomalies in the daily traffic by observing traffic
+trends
+
+503 “Service Unavailable” status code can be returned by the server for a variety of reasons, but
+it can be used as a way to detect DDOS
+
+Challenges
+parsing the log file entry to identify data points - example appears to be Apache log file format
+
+
+record count: 163416
