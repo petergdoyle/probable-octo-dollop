@@ -23,7 +23,11 @@ public class RunLogParser {
 
     public static void main(String[] args) throws Exception {
 
-        File file = new File("/Users/peter/vagrant/phdata_challenge/data/log_data.txt");
+        String filename = "/Users/peter/vagrant/phdata_challenge/data/log_data.txt";
+        if (args[0] != null && args[0].length() > 0) {
+            filename = args[0];
+        }
+        File file = new File(filename);
         HashMap<String, Integer> ipCountMap = new HashMap<>();
         Scanner input = new Scanner(file);
         int recordCount = 0;
@@ -77,7 +81,7 @@ public class RunLogParser {
         ipCountMap.entrySet()
                 .stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed()) // use this sort to order by the count 
-//                                .sorted(Map.Entry.<String, Integer>comparingByKey()) // use this sort to order by the timeinterval
+                //                                .sorted(Map.Entry.<String, Integer>comparingByKey()) // use this sort to order by the timeinterval
                 //                .limit(100)
                 .forEach((item) -> System.out.println(item.getKey().concat(",").concat(item.getValue().toString())));
 
