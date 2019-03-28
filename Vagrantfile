@@ -166,7 +166,7 @@ EOF
   fi
 
   # install any additional packages
-  yum -y install net-tools telnet git
+  yum -y install net-tools telnet git htop
 
   yum -y update
 
