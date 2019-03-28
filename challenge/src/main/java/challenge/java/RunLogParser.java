@@ -33,7 +33,7 @@ public class RunLogParser {
         int recordCount = 0;
         while (input.hasNextLine()) {
             recordCount++;
-            LogParser lp = new LogParser((String) input.nextLine());
+            LogParser lp = LogParserBuilder().setText((String) input.nextLine()).createLogParser();
             String ip = lp.getIp();
             String[] parts = ip.split("\\.");
             String subnet = parts[0]

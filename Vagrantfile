@@ -149,8 +149,8 @@ EOF
         echo "SPARK_HOME=$spark_home" >> /home/vagrant/.bashrc
     fi
     cp $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
-    sed -i -e 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
-    sed -i -e 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
+    sed -i 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
+    sed -i 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
   fi
 
 
