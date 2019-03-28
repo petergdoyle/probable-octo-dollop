@@ -1,4 +1,5 @@
-java_class='challenge.java.spark.CountOccurrences'
+
+java_class='challenge.java.spark.KafkaWordCount'
 
 mvn -f challenge/pom.xml clean install && \
 spark-submit \
