@@ -57,6 +57,7 @@ Vagrant.configure("2") do |config|
 
   # pull docker images
   docker pull bitnami/kafka:latest
+  docker pull bitnami/zookeeper:latest
 
   # pull down the bitnami git repo
   if [ ! -d "/vagrant/bitnami-docker-kafka" ]; then
@@ -111,7 +112,7 @@ EOF
 
     export MAVEN_HOME=$maven_home
     MAVEN_HOME=$maven_home
-cat >/etc/profile.d/maven.sh <<-EOF
+    cat >/etc/profile.d/maven.sh <<-EOF
 export MAVEN_HOME=$MAVEN_HOME
 export PATH=\$PATH:\$MAVEN_HOME/bin
 EOF
@@ -127,28 +128,33 @@ EOF
     rm kafka_2.12-2.1.1.tgz
     mv kafka_2.12-2.1.1 kafka_2.12
     cd -
-    # set KAFKA_HOME env var  for vagrant user
-    if ! grep -q '^KAFKA_HOME' /home/vagrant/.bashrc; then
-        echo 'KAFKA_HOME=/home/vagrant/kafka_2.12' >> /home/vagrant/.bashrc
+    # set KAFKA_HOME env var for vagrant user
+    KAFKA_HOME='/vagrant/kafka_2.12'
+    if ! grep -q '^export KAFKA_HOME' /home/vagrant/.bash_profile; then
+        cat >>/home/vagrant/.bash_profile <<-EOF
+export KAFKA_HOME=$KAFKA_HOME
+export PATH=\$PATH:\$KAFKA_HOME/bin
+EOF
     fi
   fi
 
   if [ ! -d "/vagrant/spark-2.1.1" ]; then
     cd /vagrant
-    curl -O https://www.apache.org/dyn/closer.lua/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
+    curl -O https://www-us.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
     tar -xvf spark-2.4.0-bin-hadoop2.7.tgz
     rm spark-2.4.0-bin-hadoop2.7.tgz
     mv spark-2.4.0-bin-hadoop2.7 spark-2.4.0
     cd -
-    # change log levels for standalone runtime
-    todo
     # set SPARK_HOME env var for vagrant user
-    spark_home='/home/vagrant/spark-2.4.0'
-    SPARK_HOME="$spark_home"
-    if ! grep -q '^SPARK_HOME' /home/vagrant/.bashrc; then
-        echo "SPARK_HOME=$spark_home" >> /home/vagrant/.bashrc
+    SPARK_HOME='/vagrant/spark-2.4.0'
+    if ! grep -q '^export SPARK_HOME' /home/vagrant/.bash_profile; then
+        cat >>/home/vagrant/.bash_profile <<-EOF
+export SPARK_HOME=$SPARK_HOME
+export PATH=\$PATH:\$SPARK_HOME/bin
+EOF
     fi
-    cp $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
+    # change log levels for standalone runtime
+    cp -fv $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
     sed -i 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
     sed -i 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
   fi
