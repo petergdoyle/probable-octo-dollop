@@ -42,6 +42,9 @@ https://blog.antlypls.com/blog/2015/10/05/getting-started-with-spark-streaming-u
 ## Kafka
 bitnami-docker-kafka
 https://github.com/bitnami/bitnami-docker-kafka/blob/master/README.md
+bitnami/kafka
+https://hub.docker.com/r/bitnami/kafka
+
 
 ## General
 Parse an Apache log file with Regular Expressions
