@@ -106,7 +106,7 @@ EOF
 
     cmd="curl -O $download_url \
       && tar -xvf apache-maven-3.6.0-bin.tar.gz -C /usr/maven \
-      && ln -s /usr/maven/apache-maven-3.6.0-bin.tar.gz $maven_home \
+      && ln -s /usr/maven/apache-maven-3.6.0 $maven_home \
       && rm -f apache-maven-3.6.0-bin.tar.gz"
     eval "$cmd"
 
