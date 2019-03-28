@@ -33,18 +33,16 @@ public class RunLogParser {
         int recordCount = 0;
         while (input.hasNextLine()) {
             recordCount++;
-            LogParser lp = LogParserBuilder().setText((String) input.nextLine()).createLogParser();
+            LogParser lp = LogParserBuilder.createLogParser(input.nextLine());
             String ip = lp.getIp();
-            String[] parts = ip.split("\\.");
-            String subnet = parts[0]
-                    .concat(".").concat(parts[1]).concat(".*.*");
+            String subnet = lp.getSubNet();
             String bytecount = lp.getBytecount();
-            String timestamp = lp.getTimestamp();
+            String timestamp = lp.getTimestampAsString();
             String browser = lp.getBrowser();
             String response = lp.getResponse();
             String request = lp.getRequest();
             int lastIndexOf = timestamp.lastIndexOf(":");
-            int second = Integer.valueOf(timestamp.substring(lastIndexOf + 1, lastIndexOf + 3));
+            int seconds = Integer.valueOf(lp.getTimestamp().getSeconds());
             String timeframe;
             int increment = 15;
             int max = 60;
@@ -54,7 +52,7 @@ public class RunLogParser {
             }
             timeframe = null;
             while (timeframe == null) {
-                for (int lo = 0; lo <= second; lo += increment) {
+                for (int lo = 0; lo <= seconds; lo += increment) {
                     iteration++;
                     timeframe = String.format("%02d-%02d", lo, increment * iteration);
                 }

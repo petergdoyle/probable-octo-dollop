@@ -2,6 +2,10 @@
  */
 package challenge.java;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +18,7 @@ public class LogParser {
     private final static String REGEX_PATTERN = "^([\\d.]+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(.+?)\" (\\d{3}) (\\d+) \"([^\"]+)\" \"([^\"]+)\"";
     private final static int NUM_FIELDS = 9;
     private final static Pattern PATTERN;
+    private final static SimpleDateFormat apacheLogFileTimestampFormat = new SimpleDateFormat("dd/MMM/yyyy:hh:mm:ss Z");
 
     static {
         PATTERN = Pattern.compile(REGEX_PATTERN);
@@ -57,8 +62,18 @@ public class LogParser {
         return ip;
     }
 
-    public String getTimestamp() {
+    public String getSubNet() {
+        String[] parts = ip.split("\\.");
+        return parts[0].concat(".").concat(parts[1]).concat(".*.*");
+    }
+
+    public String getTimestampAsString() {
         return timestamp;
+    }
+
+    public Timestamp getTimestamp() throws ParseException {
+        Date parsedDate = apacheLogFileTimestampFormat.parse(timestamp);
+        return new java.sql.Timestamp(parsedDate.getTime());
     }
 
     public String getBytecount() {
