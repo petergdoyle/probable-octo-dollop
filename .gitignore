@@ -1,6 +1,7 @@
 .vagrant
+.DS_Store
 bitnami-docker-kafka/
-kafka_2.12-2.1.1/
-spark-2.1.1/
+kafka*/
+spark*/
 target/
 nbproject/

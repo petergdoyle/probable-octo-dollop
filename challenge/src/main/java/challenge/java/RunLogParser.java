@@ -1,6 +1,6 @@
 /*
  */
-package phdata.challenge;
+package challenge.java;
 
 import java.io.File;
 import java.util.Arrays;

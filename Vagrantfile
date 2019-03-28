@@ -95,19 +95,18 @@ EOF
   if [ $? -eq 127 ]; then
 
     local_maven_dir="/usr/maven"
-    maven_home="$local_maven_dir/default"
-    maven_version='3.3.9'
-    download_url="http://www-us.apache.org/dist/maven/maven-3/$maven_version/binaries/apache-maven-$maven_version-bin.tar.gz"
+    maven_home="/usr/maven/default"
+    download_url="https://www-eu.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz"
 
     echo "downloading $download_url..."
-    if [ ! -d $local_maven_dir ]; then
-      mkdir -pv $local_maven_dir
+    if [ ! -d /usr/maven ]; then
+      mkdir -pv /usr/maven
     fi
 
     cmd="curl -O $download_url \
-      && tar -xvf apache-maven-$maven_version-bin.tar.gz -C $local_maven_dir \
-      && ln -s $local_maven_dir/apache-maven-$maven_version $maven_home \
-      && rm -f apache-maven-$maven_version-bin.tar.gz"
+      && tar -xvf apache-maven-3.6.0-bin.tar.gz -C /usr/maven \
+      && ln -s /usr/maven/apache-maven-3.6.0-bin.tar.gz $maven_home \
+      && rm -f apache-maven-3.6.0-bin.tar.gz"
     eval "$cmd"
 
     export MAVEN_HOME=$maven_home
@@ -117,7 +116,7 @@ export MAVEN_HOME=$MAVEN_HOME
 export PATH=\$PATH:\$MAVEN_HOME/bin
 EOF
   else
-    echo -e "apache-maven-$maven_version already appears to be installed. skipping."
+    echo -e "apache-maven-3.6.0 already appears to be installed. skipping."
   fi
 
   # download local copy of kafka
@@ -126,16 +125,32 @@ EOF
     curl -O http://mirrors.ocf.berkeley.edu/apache/kafka/2.1.1/kafka_2.12-2.1.1.tgz
     tar -xvf kafka_2.12-2.1.1.tgz
     rm kafka_2.12-2.1.1.tgz
+    mv kafka_2.12-2.1.1 kafka_2.12
     cd -
+    # set KAFKA_HOME env var  for vagrant user
+    if ! grep -q '^KAFKA_HOME' /home/vagrant/.bashrc; then
+        echo 'KAFKA_HOME=/home/vagrant/kafka_2.12' >> /home/vagrant/.bashrc
+    fi
   fi
 
   if [ ! -d "/vagrant/spark-2.1.1" ]; then
     cd /vagrant
-    curl -O https://archive.apache.org/dist/spark/spark-2.1.1/spark-2.1.1-bin-without-hadoop.tgz
-    tar -xvf spark-2.1.1-bin-without-hadoop.tgz
-    rm spark-2.1.1-bin-without-hadoop.tgz
-    mv spark-2.1.1-bin-without-hadoop spark-2.1.1
+    curl -O https://www.apache.org/dyn/closer.lua/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
+    tar -xvf spark-2.4.0-bin-hadoop2.7.tgz
+    rm spark-2.4.0-bin-hadoop2.7.tgz
+    mv spark-2.4.0-bin-hadoop2.7 spark-2.4.0
     cd -
+    # change log levels for standalone runtime
+    todo
+    # set SPARK_HOME env var for vagrant user
+    spark_home='/home/vagrant/spark-2.4.0'
+    SPARK_HOME="$spark_home"
+    if ! grep -q '^SPARK_HOME' /home/vagrant/.bashrc; then
+        echo "SPARK_HOME=$spark_home" >> /home/vagrant/.bashrc
+    fi
+    cp $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
+    sed -i -e 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
+    sed -i -e 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
   fi
 
 

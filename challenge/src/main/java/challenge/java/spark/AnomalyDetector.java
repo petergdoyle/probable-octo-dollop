@@ -1,6 +1,6 @@
 /*
  */
-package phdata.challenge;
+package challenge.java.spark;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
