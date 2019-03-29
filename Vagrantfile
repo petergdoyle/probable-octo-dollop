@@ -12,9 +12,12 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
+
   # config.vm.box = "centos/7"
   config.vm.box = "petergdoyle/CentOS-7-x86_64-Minimal-1511"
   config.ssh.insert_key = false
+
+  config.vm.network "forwarded_port", guest: 8080, host: 8080 # spark master web ui port
 
   config.vm.provider "virtualbox" do |vb|
  #   vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
@@ -55,16 +58,16 @@ Vagrant.configure("2") do |config|
     echo "docker and docker-compose already installed"
   fi
 
-  # pull docker images
-  docker pull bitnami/kafka:latest
-  docker pull bitnami/zookeeper:latest
-
-  # pull down the bitnami git repo
-  if [ ! -d "/vagrant/bitnami-docker-kafka" ]; then
-    cd /vagrant
-    git clone https://github.com/bitnami/bitnami-docker-kafka.git
-    cd -
-  fi
+  # # pull docker images
+  # docker pull bitnami/kafka:latest
+  # docker pull bitnami/zookeeper:latest
+  #
+  # # pull down the bitnami git repo
+  # if [ ! -d "/vagrant/bitnami-docker-kafka" ]; then
+  #   cd /vagrant
+  #   git clone https://github.com/bitnami/bitnami-docker-kafka.git
+  #   cd -
+  # fi
 
   # install openjdk-8
   eval java -version > /dev/null 2>&1
@@ -120,23 +123,23 @@ EOF
     echo -e "apache-maven-3.6.0 already appears to be installed. skipping."
   fi
 
-  # download local copy of kafka
-  if [ ! -d "/vagrant/kafka_2.12-2.1.1" ]; then
-    cd /vagrant
-    curl -O http://mirrors.ocf.berkeley.edu/apache/kafka/2.1.1/kafka_2.12-2.1.1.tgz
-    tar -xvf kafka_2.12-2.1.1.tgz
-    rm kafka_2.12-2.1.1.tgz
-    mv kafka_2.12-2.1.1 kafka_2.12
-    cd -
-    # set KAFKA_HOME env var for vagrant user
-    KAFKA_HOME='/vagrant/kafka_2.12'
-    if ! grep -q '^export KAFKA_HOME' /home/vagrant/.bash_profile; then
-        cat >>/home/vagrant/.bash_profile <<-EOF
-export KAFKA_HOME=$KAFKA_HOME
-export PATH=\$PATH:\$KAFKA_HOME/bin
-EOF
-    fi
-  fi
+#   # download local copy of kafka
+#   if [ ! -d "/vagrant/kafka_2.12-2.1.1" ]; then
+#     cd /vagrant
+#     curl -O http://mirrors.ocf.berkeley.edu/apache/kafka/2.1.1/kafka_2.12-2.1.1.tgz
+#     tar -xvf kafka_2.12-2.1.1.tgz
+#     rm kafka_2.12-2.1.1.tgz
+#     mv kafka_2.12-2.1.1 kafka_2.12
+#     cd -
+#     # set KAFKA_HOME env var for vagrant user
+#     KAFKA_HOME='/vagrant/kafka_2.12'
+#     if ! grep -q '^export KAFKA_HOME' /home/vagrant/.bash_profile; then
+#         cat >>/home/vagrant/.bash_profile <<-EOF
+# export KAFKA_HOME=$KAFKA_HOME
+# export PATH=\$PATH:\$KAFKA_HOME/bin
+# EOF
+#     fi
+#   fi
 
   if [ ! -d "/vagrant/spark-2.1.1" ]; then
     cd /vagrant
@@ -163,6 +166,12 @@ EOF
   # modify environment for vagrant user
   if ! grep -q '^alias cd' /home/vagrant/.bashrc; then
     echo 'alias cd="HOME=/vagrant cd"' >> /home/vagrant/.bashrc
+  fi
+  if ! grep -q '^alias ll' /home/vagrant/.bashrc; then
+    echo 'alias ll="ls -alh"' >> /home/vagrant/.bashrc
+  fi
+  if ! grep -q '^alias netstat' /home/vagrant/.bashrc; then
+    echo 'alias netstat="sudo netstat -tulpn"' >> /home/vagrant/.bashrc
   fi
 
   # install any additional packages
