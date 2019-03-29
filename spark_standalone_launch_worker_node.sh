@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-$SPARK_HOME/bin/spark-class org.apache.spark.deploy.worker.Worker  spark://localhost:7077 -c 4 -m 2048
+
+$SPARK_HOME/sbin/start-slave.sh spark://challenge.cleverfishsoftware.com:7077
