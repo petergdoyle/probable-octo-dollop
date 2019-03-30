@@ -2,10 +2,12 @@
  */
 package challenge.java;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,11 +15,11 @@ import java.util.regex.Pattern;
  *
  * @author peter
  */
-public class LogParser {
+public class LogParser implements Serializable {
 
     private final static String REGEX_PATTERN = "^([\\d.]+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(.+?)\" (\\d{3}) (\\d+) \"([^\"]+)\" \"([^\"]+)\"";
-    private final static int NUM_FIELDS = 9;
-    private final static Pattern PATTERN;
+    public static final int NUM_FIELDS = 9;
+    public static final Pattern PATTERN;
     private final static SimpleDateFormat apacheLogFileTimestampFormat = new SimpleDateFormat("dd/MMM/yyyy:hh:mm:ss Z");
 
     static {
@@ -25,33 +27,35 @@ public class LogParser {
     }
 
     private final String text;
-    private final String ip;
-    private final String timestamp;
-    private final String bytecount;
-    private final String request;
-    private final String response;
-    private final String referer;
-    private final String browser;
+    private String ip = "";
+    private String timestamp = "";
+    private String bytecount = "";
+    private String request = "";
+    private String response = "";
+    private String referer = "";
+    private String browser = "";
+    private boolean error = false;
 
-    public LogParser(final String text) throws Exception {
+    public LogParser(final String text) {
         this.text = text;
-        Matcher matcher = LogParser.PATTERN.matcher(this.text);
-        if (!matcher.matches() || NUM_FIELDS != matcher.groupCount()) {
-            throw new Exception("Bad Input");
-        }
+        Matcher matcher = LogParser.PATTERN.matcher(text);
+        try {
+            ip = matcher.group(1);
+            timestamp = matcher.group(4);
+            request = matcher.group(5);
+            response = matcher.group(6);
+            bytecount = matcher.group(7);
+            if (!matcher.group(8).equals("-")) {
+                referer = matcher.group(8);
+            } else {
+                referer = "";
+            }
+            browser = matcher.group(9);
 
-        ip = matcher.group(1);
-        timestamp = matcher.group(4);
-        request = matcher.group(5);
-        response = matcher.group(6);
-        bytecount = matcher.group(7);
-        if (!matcher.group(8).equals("-")) {
-            referer = matcher.group(8);
-        } else {
-            referer = "";
+        } catch (Exception ex) {
+            error = true;
         }
-        browser = matcher.group(9);
-
+        System.out.println("ip: "+ip+" subnet:"+getSubNet());
     }
 
     public String getText() {
@@ -63,6 +67,9 @@ public class LogParser {
     }
 
     public String getSubNet() {
+        if (ip.length() == 0) {
+            return "";
+        }
         String[] parts = ip.split("\\.");
         return parts[0].concat(".").concat(parts[1]).concat(".*.*");
     }
@@ -72,6 +79,9 @@ public class LogParser {
     }
 
     public Timestamp getTimestamp() throws ParseException {
+        if (timestamp.length() == 0) {
+            return new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
+        }
         Date parsedDate = apacheLogFileTimestampFormat.parse(timestamp);
         return new java.sql.Timestamp(parsedDate.getTime());
     }
