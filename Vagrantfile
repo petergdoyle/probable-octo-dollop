@@ -69,6 +69,12 @@ Vagrant.configure("2") do |config|
   #   cd -
   # fi
 
+  if [ ! -d "/vagrant/kafka-proxied" ]; then
+    cd /vagrant
+    git clone https://github.com/petergdoyle/kafka-proxied.git
+    cd -
+  fi
+
   # install openjdk-8
   eval java -version > /dev/null 2>&1
   if [ $? -eq 127 ]; then
@@ -115,10 +121,11 @@ EOF
 
     export MAVEN_HOME=$maven_home
     MAVEN_HOME=$maven_home
-    cat >/etc/profile.d/maven.sh <<-EOF
+    cat <<EOF >> /home/vagrant/.bash_profile
 export MAVEN_HOME=$MAVEN_HOME
-export PATH=\$PATH:\$MAVEN_HOME/bin
+export PATH=\$PATH:\$MAVEN_HOME
 EOF
+
   else
     echo -e "apache-maven-3.6.0 already appears to be installed. skipping."
   fi
@@ -151,24 +158,24 @@ EOF
     # set SPARK_HOME env var for vagrant user
     SPARK_HOME='/vagrant/spark-2.4.0'
     if ! grep -q '^export SPARK_HOME' /home/vagrant/.bash_profile; then
-        cat >>/home/vagrant/.bash_profile <<-EOF
+      cat <<EOF >> /home/vagrant/.bash_profile
 export SPARK_HOME=$SPARK_HOME
-export PATH=\$PATH:\$SPARK_HOME/bin
+export PATH=\$PATH:\$SPARK_HOME
 EOF
     fi
     # change log levels for standalone runtime
-    cp -fv $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
-    sed -i 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
-    sed -i 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
+    # cp -fv $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
+    # sed -i 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
+    # sed -i 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
   fi
 
 
   # modify environment for vagrant user
-  if ! grep -q '^alias cd' /home/vagrant/.bashrc; then
-    echo 'alias cd="HOME=/vagrant cd"' >> /home/vagrant/.bashrc
-  fi
+  # if ! grep -q '^alias cd' /home/vagrant/.bashrc; then
+  #   echo 'alias cd="HOME=/vagrant cd"' >> /home/vagrant/.bashrc
+  # fi
   if ! grep -q '^alias ll' /home/vagrant/.bashrc; then
-    echo 'alias ll="ls -alh"' >> /home/vagrant/.bashrc
+    echo 'alias ll="ls -lh"' >> /home/vagrant/.bashrc
   fi
   if ! grep -q '^alias netstat' /home/vagrant/.bashrc; then
     echo 'alias netstat="sudo netstat -tulpn"' >> /home/vagrant/.bashrc
