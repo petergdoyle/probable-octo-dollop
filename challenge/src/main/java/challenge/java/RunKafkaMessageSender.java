@@ -64,6 +64,7 @@ public class RunKafkaMessageSender {
                     .concat(method)
                     .concat(",")
                     .concat(response)
+                    .concat(",")
                     .concat(subnet);
             System.out.println(output);
             kafkaMessageSender.send(output);
