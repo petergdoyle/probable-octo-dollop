@@ -7,3 +7,5 @@ spark-2*/
 target/
 nbproject/
 messages
+*.log
+*.out

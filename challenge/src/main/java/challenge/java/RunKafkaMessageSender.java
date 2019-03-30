@@ -46,7 +46,7 @@ public class RunKafkaMessageSender {
             }
             String ip = matcher.group(1);
             String[] parts = ip.split("\\.");
-            String subnet = parts[0].concat(".").concat(parts[1]).concat(".*.*");
+            String subnet = parts[0].concat(".").concat(parts[1]);//.concat(".").concat(".*.*");
             String timestamp = matcher.group(4);
             String logtime = "";
             try {
@@ -55,17 +55,26 @@ public class RunKafkaMessageSender {
             } catch (ParseException ex) {
                 Logger.getLogger(LogRegex.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String method = matcher.group(5);
+            String request = matcher.group(5);
+            String[] split = request.split("\\s");
+            String method = split[0];
+            String uri = split[1];
+            String protocol = split[2];
             String response = matcher.group(6);
-            String output = ip.concat(",")
+            String output = 
+                    logtime
                     .concat(",")
-                    .concat(logtime)
+                    .concat(ip)
+                    .concat(",")
+                    .concat(subnet)
                     .concat(",")
                     .concat(method)
                     .concat(",")
-                    .concat(response)
+                    .concat(uri)
                     .concat(",")
-                    .concat(subnet);
+                    .concat(protocol)
+                    .concat(",")
+                    .concat(response);
             System.out.println(output);
             kafkaMessageSender.send(output);
         }
