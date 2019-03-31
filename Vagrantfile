@@ -104,7 +104,6 @@ EOF
   eval 'mvn -version' > /dev/null 2>&1
   if [ $? -eq 127 ]; then
 
-    local_maven_dir="/usr/maven"
     maven_home="/usr/maven/default"
     download_url="https://www-eu.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz"
 
@@ -120,60 +119,80 @@ EOF
     eval "$cmd"
 
     export MAVEN_HOME=$maven_home
-    MAVEN_HOME=$maven_home
-    cat <<EOF >> /home/vagrant/.bash_profile
+    cat <<EOF >>/etc/profile.d/maven.sh
 export MAVEN_HOME=$MAVEN_HOME
-export PATH=\$PATH:\$MAVEN_HOME
+export PATH=\$PATH:\$MAVEN_HOME/bin
 EOF
 
   else
     echo -e "apache-maven-3.6.0 already appears to be installed. skipping."
   fi
 
-#   # download local copy of kafka
-#   if [ ! -d "/vagrant/kafka_2.12-2.1.1" ]; then
-#     cd /vagrant
-#     curl -O http://mirrors.ocf.berkeley.edu/apache/kafka/2.1.1/kafka_2.12-2.1.1.tgz
-#     tar -xvf kafka_2.12-2.1.1.tgz
-#     rm kafka_2.12-2.1.1.tgz
-#     mv kafka_2.12-2.1.1 kafka_2.12
-#     cd -
-#     # set KAFKA_HOME env var for vagrant user
-#     KAFKA_HOME='/vagrant/kafka_2.12'
-#     if ! grep -q '^export KAFKA_HOME' /home/vagrant/.bash_profile; then
-#         cat >>/home/vagrant/.bash_profile <<-EOF
-# export KAFKA_HOME=$KAFKA_HOME
-# export PATH=\$PATH:\$KAFKA_HOME/bin
-# EOF
-#     fi
-#   fi
 
-  if [ ! -d "/vagrant/spark-2.1.1" ]; then
-    cd /vagrant
-    curl -O https://www-us.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
-    tar -xvf spark-2.4.0-bin-hadoop2.7.tgz
-    rm spark-2.4.0-bin-hadoop2.7.tgz
-    mv spark-2.4.0-bin-hadoop2.7 spark-2.4.0
-    cd -
-    # set SPARK_HOME env var for vagrant user
-    SPARK_HOME='/vagrant/spark-2.4.0'
-    if ! grep -q '^export SPARK_HOME' /home/vagrant/.bash_profile; then
-      cat <<EOF >> /home/vagrant/.bash_profile
-export SPARK_HOME=$SPARK_HOME
-export PATH=\$PATH:\$SPARK_HOME
-EOF
+  # install scala 2.11
+  eval 'scala -version' > /dev/null 2>&1
+  if [ $? -eq 127 ]; then
+
+    scala_home="/usr/scala/default"
+    download_url="https://downloads.lightbend.com/scala/2.11.12/scala-2.11.12.tgz"
+
+    if [ ! -d /usr/scala ]; then
+      mkdir -pv /usr/scala
     fi
-    # change log levels for standalone runtime
-    # cp -fv $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
-    # sed -i 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
-    # sed -i 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
+
+    echo "downloading $download_url..."
+    cmd="curl -O $download_url \
+      && tar -xvf  scala-2.11.12.tgz -C /usr/scala \
+      && ln -s /usr/scala/scala-2.11.12 $scala_home \
+      && rm -f scala-2.11.12.tgz"
+    eval "$cmd"
+
+        export SCALA_HOME=$scala_home
+        cat <<EOF >>/etc/profile.d/scala.sh
+export SCALA_HOME=$SCALA_HOME
+export PATH=\$PATH:\$SCALA_HOME/bin
+EOF
+
+  else
+    echo -e "scala-2.11 already appears to be installed. skipping."
   fi
 
+  # install spark 2.11
+  eval 'spark-submit --version' > /dev/null 2>&1
+  if [ $? -eq 127 ]; then
+
+    spark_home="/usr/spark/default"
+    download_url="https://www-us.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz"
+
+    if [ ! -d /usr/spark ]; then
+      mkdir -pv /usr/spark
+    fi
+
+    echo "downloading $download_url..."
+    cmd="curl -O $download_url \
+      && tar -xvf  spark-2.4.0-bin-hadoop2.7.tgz -C /usr/spark \
+      && ln -s /usr/spark/spark-2.4.0-bin-hadoop2.7 $spark_home \
+      && rm -f spark-2.4.0-bin-hadoop2.7.tgz"
+    eval "$cmd"
+
+        export SPARK_HOME=$spark_home
+        cat <<EOF >>/etc/profile.d/spark.sh
+export SPARK_HOME=$SPARK_HOME
+export PATH=\$PATH:\$SPARK_HOME/bin
+EOF
+
+#     # change log levels for standalone runtime
+#     # cp -fv $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
+#     # sed -i 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
+#     # sed -i 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
+  else
+    echo -e "spark-2.11 already appears to be installed. skipping."
+  fi
 
   # modify environment for vagrant user
-  # if ! grep -q '^alias cd' /home/vagrant/.bashrc; then
-  #   echo 'alias cd="HOME=/vagrant cd"' >> /home/vagrant/.bashrc
-  # fi
+  if ! grep -q '^alias cd' /home/vagrant/.bashrc; then
+    echo 'alias cd="HOME=/vagrant cd"' >> /home/vagrant/.bashrc
+  fi
   if ! grep -q '^alias ll' /home/vagrant/.bashrc; then
     echo 'alias ll="ls -lh"' >> /home/vagrant/.bashrc
   fi
