@@ -4,8 +4,10 @@ bitnami-docker-kafka/
 kafka-proxied/
 kafka_2*/
 spark-2*/
+scala-2*/
 target/
 nbproject/
+taming_big_data_with_spark_streaming/
 messages
 *.log
 *.out
