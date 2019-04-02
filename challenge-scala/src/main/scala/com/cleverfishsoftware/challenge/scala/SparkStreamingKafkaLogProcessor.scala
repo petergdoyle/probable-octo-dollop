@@ -50,15 +50,47 @@ object SparkStreamingKafkaLogProcessor {
       "enable.auto.commit" -> (true: java.lang.Boolean)
     )
 
+    /** Retrieves a regex Pattern for parsing Apache access logs. */
+    def apacheLogPattern():Pattern = {
+      val ddd = "\\d{1,3}"
+      // val ip = s"($ddd\\.$ddd\\.$ddd\\.$ddd)?"
+      val ip = s"($ddd)\\.($ddd)\\.($ddd)\\.($ddd)?"
+      val client = "(\\S+)"
+      val user = "(\\S+)"
+      val dateTime = "(\\[.+?\\])"
+      val request = "\"(.*?)\""
+      val status = "(\\d{3})"
+      val bytes = "(\\S+)"
+      val referer = "\"(.*?)\""
+      val agent = "\"(.*?)\""
+      val regex = s"$ip $client $user $dateTime $request $status $bytes $referer $agent"
+      Pattern.compile(regex)
+    }
+
     val stream = KafkaUtils.createDirectStream[String, String](
       ssc,
       PreferConsistent,
       Subscribe[String, String](topicsSet, kafkaParams)
     )
+
+    // create the rdd based on the values of the kafka ConsumerRecord
     val messages = stream.map(_.value)
-    val words = messages.flatMap(_.split(" "))
-    val wordCounts = words.map(x => (x, 1L)).reduceByKey(_ + _)
-    wordCounts.print()
+
+    // Extract the request field from each log line
+    val pattern = apacheLogPattern()
+    val ips = messages.map(x => {val matcher:Matcher = pattern.matcher(x); if (matcher.matches()) matcher.group(1).concat(".").concat(matcher.group(2))})
+
+    // val totals = ips.map(x => (x, 1L)).reduceByKey(_ + _)
+
+    val totals = ips.countByValue()
+
+    totals.print()
+
+    // print unique ip numbers
+    // val parts = messages.flatMap(_.split(" "))
+    // val ips = words.map(x => (x, 1L)).reduceByKey(_ + _)
+    // ips.print()
+
 
     // Start the computation
     ssc.start()
