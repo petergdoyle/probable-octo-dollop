@@ -18,7 +18,6 @@ https://www.zdnet.com/article/processing-time-series-data-what-are-the-options/
 Unsupervised Anomaly Detection with Spark
 https://mapr.com/ebooks/spark/08-unsupervised-anomaly-detection-apache-spark.html
 Supervised vs Unsupervised vs
-missing link
 
 
 ## Spark Streaming
@@ -36,7 +35,10 @@ SparkStringConsumer
 https://www.programcreek.com/java-api-examples/?code=aseigneurin/kafka-sandbox/kafka-sandbox-master/spark-streaming/src/main/java/com/seigneurin/strings/SparkStringConsumer.java  
 Getting started with Spark Streaming using Docker  
 https://blog.antlypls.com/blog/2015/10/05/getting-started-with-spark-streaming-using-docker/  
+Understanding Spark RDD  
 https://hub.packtpub.com/understanding-spark-rdd/  
+Spark Streaming Window Operations  
+https://techvidvan.com/tutorials/spark-streaming-window-operations/
 
 ## Spark
 Spark & Python: Working with RDDs (I)  
@@ -53,3 +55,13 @@ https://github.com/bitnami/bitnami-docker-kafka/blob/master/README.md
 ## General
 Parse an Apache log file with Regular Expressions  
 http://www.java2s.com/Code/Java/Development-Class/ParseanApachelogfilewithRegularExpressions.htm
+
+## Scala projects with Maven
+Scala with Maven  
+https://docs.scala-lang.org/tutorials/scala-with-maven.html  
+
+## Java 8 Streams
+Create a Frequency Map in Java 8
+https://www.techiedelight.com/create-frequency-map-java-8/
+Implementing a Sliding Window Stream/Spliterator in Java  
+https://4comprehension.com/sliding-window-stream-spliterator-in-java/
