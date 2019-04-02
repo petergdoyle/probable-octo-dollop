@@ -2,9 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.cleverfishsoftware</groupId>
-  <artifactId>challenge-uber-jar</artifactId>
+  <artifactId>challenge-scala-uber-jar</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>challenge-uber-jar</name>
+  <name>challenge-scala-uber-jar</name>
+  <description>data challenge in scala</description>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -24,23 +25,45 @@
 
     <dependency>
         <groupId>org.apache.spark</groupId>
+        <artifactId>spark-core_2.11</artifactId>
+        <version>2.4.0</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-streaming_2.11</artifactId>
+        <version>2.4.0</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-sql_2.11</artifactId>
+        <version>2.4.0</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.spark</groupId>
         <artifactId>spark-sql-kafka-0-10_2.11</artifactId>
         <version>2.4.0</version>
+        <!--<scope>provided</scope>-->
     </dependency>
     <dependency>
         <groupId>org.apache.spark</groupId>
         <artifactId>spark-streaming-kafka-0-10_2.11</artifactId>
         <version>2.4.0</version>
+        <!--<scope>provided</scope>-->
     </dependency>
     <dependency>
         <groupId>org.apache.spark</groupId>
         <artifactId>spark-examples_2.10</artifactId>
         <version>1.1.1</version>
+        <!--<scope>provided</scope>-->
     </dependency>
     <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-clients</artifactId>
         <version>0.10.2.1</version>
+        <!--<scope>provided</scope>-->
     </dependency>
 
     <dependency>
@@ -73,19 +96,19 @@
     <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
+              <groupId>net.alchim31.maven</groupId>
+              <artifactId>scala-maven-plugin</artifactId>
+              <version>4.0.1</version>
+              <executions>
+                  <execution>
+                      <goals>
+                          <goal>compile</goal>
+                      </goals>
+                  </execution>
+              </executions>
             </plugin>
+            <!-- https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven -->
             <plugin>
-                <!-- https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven -->
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptorRefs>
