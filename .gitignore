@@ -11,3 +11,4 @@ taming_big_data_with_spark_streaming/
 messages
 *.log
 *.out
+scratch/
