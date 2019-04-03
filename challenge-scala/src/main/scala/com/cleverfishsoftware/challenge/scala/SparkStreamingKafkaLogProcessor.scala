@@ -78,13 +78,25 @@ object SparkStreamingKafkaLogProcessor {
 
     // Extract the request field from each log line
     val pattern = apacheLogPattern()
-    val ips = messages.map(x => {val matcher:Matcher = pattern.matcher(x); if (matcher.matches()) matcher.group(1).concat(".").concat(matcher.group(2))})
+    val subnets = messages.map(x => {val matcher:Matcher = pattern.matcher(x); if (matcher.matches()) matcher.group(1).concat(".").concat(matcher.group(2))})
+
+    val subnetValues = subnets.map(subnet => (subnet, 1))
+
+    // Now count them up over a 5 minute window sliding every one second
+    val subnetCounts = subnetValues.reduceByKeyAndWindow( (x,y) => x + y, (x,y) => x - y, Seconds(300), Seconds(1))
+    //  You will often see this written in the following shorthand:
+    //val hashtagCounts = hashtagKeyValues.reduceByKeyAndWindow( _ + _, _ -_, Seconds(300), Seconds(1))
+
+    // Sort the results by the count values
+    val sortedResults = subnetCounts.transform(rdd => rdd.sortBy(x => x._2, false))
+
+    sortedResults.print()
 
     // val totals = ips.map(x => (x, 1L)).reduceByKey(_ + _)
 
-    val totals = ips.countByValue()
-
-    totals.print()
+    // val totals = ips.countByValueAndWindow()
+    //
+    // totals.print()
 
     // print unique ip numbers
     // val parts = messages.flatMap(_.split(" "))
@@ -93,6 +105,7 @@ object SparkStreamingKafkaLogProcessor {
 
 
     // Start the computation
+    ssc.checkpoint("/spark/checkpoint")
     ssc.start()
     ssc.awaitTermination()
   }

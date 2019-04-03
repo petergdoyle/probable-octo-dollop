@@ -180,6 +180,11 @@ EOF
 export SPARK_HOME=$SPARK_HOME
 export PATH=\$PATH:\$SPARK_HOME/bin
 EOF
+    # spark nodes need a checkpoint directory to keep state should a node go down
+    if [ ! -d "/spark/checkpoint" ] then
+      mkdir -p "/spark/checkpoint"
+      chmod ugo+rw "/spark/checkpoint/"
+    fi
 
 #     # change log levels for standalone runtime
 #     # cp -fv $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
