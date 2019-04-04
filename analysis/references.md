@@ -14,7 +14,11 @@ https://link.springer.com/article/10.1007%2FBF02831726
 Time Series Analysis with Spark
 https://databricks.com/session/time-series-analysis-with-spark
 Processing time series data: What are the options?
-https://www.zdnet.com/article/processing-time-series-data-what-are-the-options/
+https://www.zdnet.com/article/processing-time-series-data-what-are-the-options/  
+Introducing Flint: A time-series library for Apache Spark  
+https://databricks.com/blog/2018/09/11/introducing-flint-a-time-series-library-for-apache-spark.html  
+A New Library for Analyzing Time-Series Data with Apache Spark - December 14, 2015  
+https://blog.cloudera.com/blog/2015/12/spark-ts-a-new-library-for-analyzing-time-series-data-with-apache-spark/  
 
 ## Machine Learning
 Unsupervised Anomaly Detection with Spark
@@ -37,7 +41,13 @@ https://spark.apache.org/docs/latest/streaming-programming-guide.html
 SparkStringConsumer
 https://www.programcreek.com/java-api-examples/?code=aseigneurin/kafka-sandbox/kafka-sandbox-master/spark-streaming/src/main/java/com/seigneurin/strings/SparkStringConsumer.java
 Getting started with Spark Streaming using Docker
-https://blog.antlypls.com/blog/2015/10/05/getting-started-with-spark-streaming-using-docker/
+https://blog.antlypls.com/blog/2015/10/05/getting-started-with-spark-streaming-using-docker/  
+Spark Streaming: Window vs Batch  
+http://www.infoobjects.com/2016/02/28/spark-streaming-window-vs-batch/  
+
+## Structured Streaming
+How do I group my dataset by a key or combination of keys without doing any aggregations using RDDs, DataFrames, and SQL?  
+https://forums.databricks.com/questions/956/how-do-i-group-my-dataset-by-a-key-or-combination.html  
 
 ## Kafka
 bitnami-docker-kafka
