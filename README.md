@@ -44,9 +44,22 @@ $ echo $PATH
 
 Recommended Setup is to use Vagrant and Virtualbox to set up a virtual machine provisioned with all the Prerequisites detailed above. 
 
-Create a Kafka Standalone Cluster (using kafka-proxied scripts) and create topics as follows (pay attention the the required setup values shown below) and check the last output to make sure the cluster looks good (broker and zookeeper processes are running). See instructions [here](https://github.com/petergdoyle/probable-octo-dollop/blob/master/kafka.md)
+**Create a Kafka Standalone Cluster** (using kafka-proxied scripts) and create topics as follows (pay attention the the required setup values shown below) and check the last output to make sure the cluster looks good (broker and zookeeper processes are running). See instructions [here](https://github.com/petergdoyle/probable-octo-dollop/blob/master/kafka.md)
 
+**Start Spark Standalone Master and Worker Nodes** 
+```
+$ ./spark_standalone_start_master.sh && ./spark_standalone_start_worker.sh 
+```
 
-End with an example of getting some data out of the system or using it for a little demo
+**Submit the spark job to connect to Kafka, stream the messages, and look for abnormal behavior** 
+```
+$ ./spark_submit_scala_LogReaderKafkaProducer.sh
+```
+
+**Submit the spark job to read a web log file and push those lines into Kafka**
+```
+$ ./spark_submit_scala_SparkStreamingKafkaLogProcessor.sh
+```
+
 
 
