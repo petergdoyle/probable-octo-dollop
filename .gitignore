@@ -12,3 +12,4 @@ messages
 *.log
 *.out
 scratch/
+violations/

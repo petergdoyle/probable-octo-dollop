@@ -13,6 +13,9 @@ broker_list='localhost:9092'
 topic_name="logs"
 consumer_group_id="SparkStreamingKafkaLogProcessor-cg"
 batch_size="1"
+threshold="5"
+checkpoint_dir="/spark/checkpoint"
+violations_dir="./violations"
 
 skip_build="$1"
 status=0
@@ -22,5 +25,5 @@ if  [ "$skip_build" != "--skipBuild" ]; then
 fi
 
 if test $status -eq 0; then
-  spark-submit $driver_java_options --master $spark_cluster_address --jars $uber_jar --class $class_name $jar $spark_cluster_address $broker_list $consumer_group_id $topic_name $batch_size
+  spark-submit $driver_java_options --master $spark_cluster_address --jars $uber_jar --class $class_name $jar $spark_cluster_address $broker_list $consumer_group_id $topic_name $batch_size $threshold $checkpoint_dir $violations_dir
 fi
