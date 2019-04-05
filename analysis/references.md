@@ -44,10 +44,27 @@ Getting started with Spark Streaming using Docker
 https://blog.antlypls.com/blog/2015/10/05/getting-started-with-spark-streaming-using-docker/  
 Spark Streaming: Window vs Batch  
 http://www.infoobjects.com/2016/02/28/spark-streaming-window-vs-batch/  
+Time window events with Apache Spark Streaming  
+https://damieng.com/blog/2015/06/27/time-window-events-with-apache-spark-streaming
+Diving into Apache Spark Streaming’s Execution Model  
+https://databricks.com/blog/2015/07/30/diving-into-apache-spark-streamings-execution-model.html  
+
 
 ## Structured Streaming
+Real-time Streaming ETL with Structured Streaming in Apache Spark 2.1  
+https://databricks.com/blog/2017/01/19/real-time-streaming-etl-structured-streaming-apache-spark-2-1.html  
+Working with Complex Data Formats with Structured Streaming in Apache Spark 2.1  
+https://databricks.com/blog/2017/02/23/working-complex-data-formats-structured-streaming-apache-spark-2-1.html  
+Processing Data in Apache Kafka with Structured Streaming in Apache Spark 2.2  
+https://databricks.com/blog/2017/04/26/processing-data-in-apache-kafka-with-structured-streaming-in-apache-spark-2-2.html  
+Event-time Aggregation and Watermarking in Apache Spark’s Structured Streaming  
+https://databricks.com/blog/2017/05/08/event-time-aggregation-watermarking-apache-sparks-structured-streaming.html  
+Spark Structured Streaming A new high-level API for streaming  
+https://databricks.com/blog/2016/07/28/structured-streaming-in-apache-spark.html  
+
 How do I group my dataset by a key or combination of keys without doing any aggregations using RDDs, DataFrames, and SQL?  
 https://forums.databricks.com/questions/956/how-do-i-group-my-dataset-by-a-key-or-combination.html  
+
 
 ## Kafka
 bitnami-docker-kafka
