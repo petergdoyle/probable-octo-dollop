@@ -60,6 +60,10 @@ $ ./spark_submit_scala_LogReaderKafkaProducer.sh
 ```
 $ ./spark_submit_scala_SparkStreamingKafkaLogProcessor.sh
 ```
+**Check output for usage violations**
+```
+$ cat violations/part-00000
+```
 
 
 
