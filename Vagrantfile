@@ -31,32 +31,32 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
 
 
-  eval 'docker --version' > /dev/null 2>&1
-  if [ $? -eq 127 ]; then
-    echo "installing docker and docker-compose..."
-
-    yum -y remove docker docker-common  docker-selinux docker-engine
-    yum -y install yum-utils device-mapper-persistent-data lvm2
-    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    rm -fr /etc/yum.repos.d/docker.repo
-    yum-config-manager --enable docker-ce-edge
-    yum-config-manager --enable docker-ce-test
-    yum -y makecache fast
-    yum -y install docker-ce
-
-    systemctl start docker
-    systemctl enable docker
-    groupadd docker
-
-    yum -y install python-pip
-    pip install --upgrade pip
-    pip install -U docker-compose
-
-    usermod -aG docker vagrant
-
-  else
-    echo "docker and docker-compose already installed"
-  fi
+  # eval 'docker --version' > /dev/null 2>&1
+  # if [ $? -eq 127 ]; then
+  #   echo "installing docker and docker-compose..."
+  #
+  #   yum -y remove docker docker-common  docker-selinux docker-engine
+  #   yum -y install yum-utils device-mapper-persistent-data lvm2
+  #   yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  #   rm -fr /etc/yum.repos.d/docker.repo
+  #   yum-config-manager --enable docker-ce-edge
+  #   yum-config-manager --enable docker-ce-test
+  #   yum -y makecache fast
+  #   yum -y install docker-ce
+  #
+  #   systemctl start docker
+  #   systemctl enable docker
+  #   groupadd docker
+  #
+  #   yum -y install python-pip
+  #   pip install --upgrade pip
+  #   pip install -U docker-compose
+  #
+  #   usermod -aG docker vagrant
+  #
+  # else
+  #   echo "docker and docker-compose already installed"
+  # fi
 
   # # pull docker images
   # docker pull bitnami/kafka:latest
@@ -121,7 +121,7 @@ EOF
     export MAVEN_HOME=$maven_home
     cat <<EOF >>/etc/profile.d/maven.sh
 export MAVEN_HOME=$MAVEN_HOME
-export PATH=\$PATH:\$MAVEN_HOME/bin
+export PATH=\\\$PATH:\\\$MAVEN_HOME/bin
 EOF
 
   else
@@ -150,7 +150,7 @@ EOF
         export SCALA_HOME=$scala_home
         cat <<EOF >>/etc/profile.d/scala.sh
 export SCALA_HOME=$SCALA_HOME
-export PATH=\$PATH:\$SCALA_HOME/bin
+export PATH=\\\$PATH:\\\$SCALA_HOME/bin
 EOF
 
   else
@@ -178,10 +178,10 @@ EOF
         export SPARK_HOME=$spark_home
         cat <<EOF >>/etc/profile.d/spark.sh
 export SPARK_HOME=$SPARK_HOME
-export PATH=\$PATH:\$SPARK_HOME/bin
+export PATH=\\\$PATH:\\\$SPARK_HOME/bin
 EOF
     # spark nodes need a checkpoint directory to keep state should a node go down
-    if [ ! -d "/spark/checkpoint" ] then
+    if [ ! -d "/spark/checkpoint" ]; then
       mkdir -p "/spark/checkpoint"
       chmod ugo+rw "/spark/checkpoint/"
     fi
