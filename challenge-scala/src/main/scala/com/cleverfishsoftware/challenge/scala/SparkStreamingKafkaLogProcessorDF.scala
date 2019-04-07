@@ -3,9 +3,13 @@ package com.cleverfishsoftware.challenge.scala
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.storage.StorageLevel
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql._
 
 import java.util.regex.Pattern
 import java.util.regex.Matcher
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -13,48 +17,36 @@ import org.apache.spark.streaming.kafka010._
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 
-/** Working example of listening for log data from Kafka's logs topic on port 9092. */
-object SparkStreamingKafkaLogProcessor {
+object SparkStreamingKafkaLogProcessorDFFrequency {
 
   def main(args: Array[String]) {
 
-    if (args.length < 5) {
-        System.err.println("Usage: SparkStreamingKafkaLogProcessor <spark-master> <brokers> <groupId> <topic1,topic2,...> <batchsize> <threshold>\n"
+    if (args.length < 8) {
+        System.err.println("Usage: SparkStreamingKafkaLogProcessorDFFrequency <spark-master> <brokers> <groupId> <topic1,topic2,...> <batchsize> <threshold> <checkpointsDir> <violationsDir>\n"
                 + "  <spark-master> is used by the spark context to determine how to execute\n"
                 + "  <brokers> is a list of one or more Kafka brokers\n"
                 + "  <groupId> is a consumer group name to consume from topics\\n"
                 + "  <topics> is a list of one or more kafka topics to consume from\n"
                 + "  <batchsize> is a the size of the streaming batch window in seconds\\n\n"
-                + "  <threshold> is a the size of the threshold to break within the batch window\\n\n");
-
-        System.exit(1);
+                + "  <threshold> is a the size of the threshold to break within the batch window\\n\n"
+                + "  <checkpointsDir> is a the fs location for spark streaming to store checkpoint information\\n\n"
+                + "  <violationsDir> is a the location for this program to write traffic violations to\\n\n");
+        System.exit(1)
     }
+
     val master=args(0)
     val brokers=args(1)
     val groupId=args(2)
     val topics=args(3)
     val batchSize=args(4)
+    val threshold=args(5)
+    val checkpointDir=args(6)
+    var violationsDir=args(7)
 
-
-      // StreamingExamples.setStreamingLogLevels();
-
-    // Create the context with a 1 second batch size
-    val ssc = new StreamingContext(new SparkConf().setMaster(master).setAppName("SparkStreamingKafkaLogProcessor"), Seconds(batchSize.toLong))
-    val topicsSet = topics.split(",").toSet
-    val kafkaParams = Map[String, Object](
-      "bootstrap.servers" -> brokers,
-      "key.deserializer" -> classOf[StringDeserializer],
-      "value.deserializer" -> classOf[StringDeserializer],
-      "group.id" -> groupId,
-      "auto.offset.reset" -> "latest",
-      "enable.auto.commit" -> (true: java.lang.Boolean)
-    )
-
+    val ddd = "\\d{1,3}"
     /** Retrieves a regex Pattern for parsing Apache access logs. */
     def apacheLogPattern():Pattern = {
-      val ddd = "\\d{1,3}"
-      // val ip = s"($ddd\\.$ddd\\.$ddd\\.$ddd)?"
-      val ip = s"($ddd)\\.($ddd)\\.($ddd)\\.($ddd)?"
+      val ip = s"($ddd\\.$ddd\\.$ddd\\.$ddd)?"
       val client = "(\\S+)"
       val user = "(\\S+)"
       val dateTime = "(\\[.+?\\])"
@@ -66,48 +58,92 @@ object SparkStreamingKafkaLogProcessor {
       val regex = s"$ip $client $user $dateTime $request $status $bytes $referer $agent"
       Pattern.compile(regex)
     }
+    // Case class defining structured data for a line of Apache access log data
+    case class LogEntry(ip:String, subnet:String, client:String, user:String, dateTime:String, request:String, status:String, bytes:String, referer:String, agent:String)
 
-    val stream = KafkaUtils.createDirectStream[String, String](
-      ssc,
-      PreferConsistent,
-      Subscribe[String, String](topicsSet, kafkaParams)
-    )
+    val logPattern = apacheLogPattern()
+    val datePattern = Pattern.compile("\\[(.*?) .+]") // will help out parse parts of a timestamp
 
-    // create the rdd based on the values of the kafka ConsumerRecord
-    val messages = stream.map(_.value)
+    // Function to convert Apache log times to what Spark/SQL expects
+    def parseDateField(field: String): Option[String] = {
+    val matcher = datePattern.matcher(field)
+      if (matcher.find) {
+        val dateString = matcher.group(1)
+        val dateFormat = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss", Locale.ENGLISH)
+        val date = (dateFormat.parse(dateString))
+        val timestamp = new java.sql.Timestamp(date.getTime());
+        return Option(timestamp.toString())
+      } else {
+        None
+      }
+    }
 
-    // Extract the request field from each log line
-    val pattern = apacheLogPattern()
-    val subnets = messages.map(x => {val matcher:Matcher = pattern.matcher(x); if (matcher.matches()) matcher.group(1).concat(".").concat(matcher.group(2))})
+    val ipPartsPattern = Pattern.compile(s"($ddd\\.$ddd)\\.($ddd\\.$ddd)?") // will help parse out parts of the ip
+    // Function to extact the subnet from the ip
+    def parseSubnetField(field: String): Option[String] = {
+      val matcher = ipPartsPattern.matcher(field)
+      if (matcher.find) {
+        val part1 = matcher.group(1) // this should be the subnet
+        val part2 = matcher.group(2)
+        return Option(part1)
+      } else {
+        None
+      }
+    }
 
-    val subnetValues = subnets.map(subnet => (subnet, 1))
+    // Convert a raw line of Apache access log data to a structured LogEntry object (or None if line is corrupt)
+    def parseLog(s:String) : Option[LogEntry] = {
+      val matcher:Matcher = logPattern.matcher(s);
+      if (matcher.matches()) {
+        return Some(LogEntry(
+        matcher.group(1),
+        parseSubnetField(matcher.group(1)).getOrElse(""),
+        matcher.group(2),
+        matcher.group(3),
+        parseDateField(matcher.group(4)).getOrElse(""),
+        matcher.group(5),
+        matcher.group(6),
+        matcher.group(7),
+        matcher.group(8),
+        matcher.group(9)
+        ))
+      } else {
+        return None
+      }
+    }
 
-    // Now count them up over a 5 minute window sliding every one second
-    val subnetCounts = subnetValues.reduceByKeyAndWindow( (x,y) => x + y, (x,y) => x - y, Seconds(300), Seconds(1))
-    //  You will often see this written in the following shorthand:
-    //val hashtagCounts = hashtagKeyValues.reduceByKeyAndWindow( _ + _, _ -_, Seconds(300), Seconds(1))
+    val spark = SparkSession
+      .builder
+      .appName("SparkStreamingKafkaLogProcessorDFFrequency")
+      .getOrCreate()
 
-    // Sort the results by the count values
-    val sortedResults = subnetCounts.transform(rdd => rdd.sortBy(x => x._2, false))
+    import spark.implicits._
 
-    sortedResults.print()
+    // Create DataSet representing the stream of input lines from kafka
+    val rawData = spark
+      .readStream
+      .format("kafka")
+      .option("kafka.bootstrap.servers", brokers)
+      .option("subscribe", topics)
+      .load()
+      // .selectExpr("CAST(value AS STRING)")
+      // .as[String]
 
-    // val totals = ips.map(x => (x, 1L)).reduceByKey(_ + _)
+    // Convert our raw text into a DataSet of LogEntry rows, then just select the two columns we care about
+    val structuredData = rawData.flatMap(parseLog).select("status", "dateTime")
 
-    // val totals = ips.countByValueAndWindow()
-    //
-    // totals.print()
+    // Group by status code, with a one-hour window.
+    val windowed = structuredData.groupBy($"status", window($"dateTime", "1 hour")).count().orderBy("window")
 
-    // print unique ip numbers
-    // val parts = messages.flatMap(_.split(" "))
-    // val ips = words.map(x => (x, 1L)).reduceByKey(_ + _)
-    // ips.print()
+    // Start the streaming query, dumping results to the console. Use "complete" output mode because we are aggregating
+    // (instead of "append").
+    val query = windowed.writeStream.outputMode("complete").format("console").start()
 
+    // Keep going until we're stopped.
+    query.awaitTermination()
 
-    // Start the computation
-    ssc.checkpoint("/spark/checkpoint")
-    ssc.start()
-    ssc.awaitTermination()
+    spark.stop()
+
   }
 
 }
