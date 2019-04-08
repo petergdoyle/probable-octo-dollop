@@ -19,8 +19,8 @@ https://www.zdnet.com/article/processing-time-series-data-what-are-the-options/
 ## Machine Learning
 Unsupervised Anomaly Detection with Spark  
 https://mapr.com/ebooks/spark/08-unsupervised-anomaly-detection-apache-spark.html  
-Supervised vs Unsupervised vs  
-
+Supervised, Unsupervised, Semi-Supervised and Reinforcement Learning  
+https://blogs.nvidia.com/blog/2018/08/02/supervised-unsupervised-learning/  
 
 ## Spark Streaming
 Introduction to Spark Structured Streaming - Part 15: Meetup Talk on Time and Window API  
@@ -29,8 +29,6 @@ Apache Spark Streaming Simplified
 https://medium.com/swlh/apache-spark-streaming-simplified-3107f1580b30  
 JavaDirectKafkaWordCount.java  
 https://github.com/apache/spark/blob/master/examples/src/main/java/org/apache/spark/examples/streaming/JavaDirectKafkaWordCount.java  
-Event-time Aggregation and Watermarking in Apache Spark’s Structured Streaming  
-https://databricks.com/blog/2017/05/08/event-time-aggregation-watermarking-apache-sparks-structured-streaming.html  
 Spark Streaming Programming Guide  
 https://spark.apache.org/docs/latest/streaming-programming-guide.html  
 SparkStringConsumer  
@@ -41,6 +39,12 @@ Understanding Spark RDD
 https://hub.packtpub.com/understanding-spark-rdd/  
 Spark Streaming Window Operations  
 https://techvidvan.com/tutorials/spark-streaming-window-operations/
+
+## Spark Structured Streaming  
+Apache Spark Structured Streaming  
+https://jhui.github.io/2017/01/15/Apache-Spark-Streaming/  
+Event-time Aggregation and Watermarking in Apache Spark’s Structured Streaming  
+https://databricks.com/blog/2017/05/08/event-time-aggregation-watermarking-apache-sparks-structured-streaming.html  
 
 ## Spark
 Spark & Python: Working with RDDs (I)  

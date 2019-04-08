@@ -41,7 +41,7 @@ $ echo $PATH
 
 ### Running the Code   
 
-Recommended Setup is to use Vagrant and Virtualbox to set up a virtual machine provisioned with all the Prerequisites detailed above. More instructions [here](https://github.com/petergdoyle/probable-octo-dollop/blob/master/vagrant.md). 
+Recommended Setup is to use Vagrant and Virtualbox to set up a virtual machine provisioned with all the Prerequisites detailed above. More instructions [here](https://github.com/petergdoyle/probable-octo-dollop/blob/master/vagrant.md).
 
 **Create a Kafka Standalone Cluster** (using kafka-proxied scripts) and create topics as follows (pay attention the the required setup values shown below) and check the last output to make sure the cluster looks good (broker and zookeeper processes are running). See instructions [here](https://github.com/petergdoyle/probable-octo-dollop/blob/master/kafka.md)
 
