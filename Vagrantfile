@@ -30,45 +30,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
 
-
-  # eval 'docker --version' > /dev/null 2>&1
-  # if [ $? -eq 127 ]; then
-  #   echo "installing docker and docker-compose..."
-  #
-  #   yum -y remove docker docker-common  docker-selinux docker-engine
-  #   yum -y install yum-utils device-mapper-persistent-data lvm2
-  #   yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-  #   rm -fr /etc/yum.repos.d/docker.repo
-  #   yum-config-manager --enable docker-ce-edge
-  #   yum-config-manager --enable docker-ce-test
-  #   yum -y makecache fast
-  #   yum -y install docker-ce
-  #
-  #   systemctl start docker
-  #   systemctl enable docker
-  #   groupadd docker
-  #
-  #   yum -y install python-pip
-  #   pip install --upgrade pip
-  #   pip install -U docker-compose
-  #
-  #   usermod -aG docker vagrant
-  #
-  # else
-  #   echo "docker and docker-compose already installed"
-  # fi
-
-  # # pull docker images
-  # docker pull bitnami/kafka:latest
-  # docker pull bitnami/zookeeper:latest
-  #
-  # # pull down the bitnami git repo
-  # if [ ! -d "/vagrant/bitnami-docker-kafka" ]; then
-  #   cd /vagrant
-  #   git clone https://github.com/bitnami/bitnami-docker-kafka.git
-  #   cd -
-  # fi
-
   if [ ! -d "/vagrant/kafka-proxied" ]; then
     cd /vagrant
     git clone https://github.com/petergdoyle/kafka-proxied.git
@@ -186,10 +147,6 @@ EOF
       chmod ugo+rw "/spark/checkpoint/"
     fi
 
-#     # change log levels for standalone runtime
-#     # cp -fv $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
-#     # sed -i 's/WARN/ERROR/g' $SPARK_HOME/conf/log4j.properties
-#     # sed -i 's/INFO/ERROR/g' $SPARK_HOME/conf/log4j.properties
   else
     echo -e "spark-2.11 already appears to be installed. skipping."
   fi
