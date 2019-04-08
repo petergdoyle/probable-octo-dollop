@@ -134,7 +134,10 @@ object SparkStreamingKafkaLogProcessorDF {
     val structuredData = rawData.flatMap(parseLog).select("subnet", "dateTime")
 
     // Group by subnet code, with a one-hour window.
-    val windowed = structuredData.groupBy($"subnet", window($"dateTime", "3 second")).count().orderBy("window")
+    val windowed = structuredData
+    .groupBy($"subnet",window($"dateTime", "2 second"))
+    .count()
+    .orderBy("window")
 
     // Start the streaming query, dumping results to the console. Use "complete" output mode because we are aggregating
     // (instead of "append").
