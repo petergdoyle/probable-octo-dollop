@@ -21,12 +21,12 @@ object SparkStreamingKafkaLogProcessorRDD {
         System.err.println("Usage: SparkStreamingKafkaLogProcessorRDD <spark-master> <brokers> <groupId> <topic1,topic2,...> <batchsize> <threshold> <checkpointsDir> <violationsDir>\n"
                 + "  <spark-master> is used by the spark context to determine how to execute\n"
                 + "  <brokers> is a list of one or more Kafka brokers\n"
-                + "  <groupId> is a consumer group name to consume from topics\\n"
+                + "  <groupId> is a consumer group name to consume from topics\n"
                 + "  <topics> is a list of one or more kafka topics to consume from\n"
-                + "  <batchsize> is a the size of the streaming batch window in seconds\\n\n"
-                + "  <threshold> is a the size of the threshold to break within the batch window\\n\n"
-                + "  <checkpointsDir> is a the fs location for spark streaming to store checkpoint information\\n\n"
-                + "  <violationsDir> is a the location for this program to write traffic violations to\\n\n");
+                + "  <batchsize> is a the size of the streaming batch window in seconds\n"
+                + "  <threshold> is a the size of the threshold to break within the batch window\n"
+                + "  <checkpointsDir> is a the fs location for spark streaming to store checkpoint information\n"
+                + "  <violationsDir> is a the location for this program to write traffic violations\\n\n");
         System.exit(1)
     }
 
