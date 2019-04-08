@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-$SPARK_HOME/sbin/stop-slave.sh
-$SPARK_HOME/sbin/stop-master.sh
+
+./spark_standalone_stop_worker.sh
+./spark_standalone_stop_master.sh
