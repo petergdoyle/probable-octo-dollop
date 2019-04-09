@@ -18,6 +18,9 @@ Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
   config.vm.network "forwarded_port", guest: 8080, host: 8080 # spark master web ui port
+  config.vm.network "forwarded_port", guest: 8081, host: 8081 # spark worker web ui port
+  config.vm.network "forwarded_port", guest: 4040, host: 4040 # spark job web ui port
+
 
   config.vm.provider "virtualbox" do |vb|
  #   vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
@@ -161,6 +164,11 @@ EOF
   if ! grep -q '^alias netstat' /home/vagrant/.bashrc; then
     echo 'alias netstat="sudo netstat -tulpn"' >> /home/vagrant/.bashrc
   fi
+
+  yum -y install rh-python36
+  scl enable rh-python36 bash
+  yum -y python36-pip
+  pip3 install numpy pandas
 
   # install any additional packages
   yum -y install net-tools telnet git htop
