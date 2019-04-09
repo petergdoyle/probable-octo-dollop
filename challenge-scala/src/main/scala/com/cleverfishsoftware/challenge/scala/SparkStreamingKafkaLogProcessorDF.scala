@@ -116,7 +116,7 @@ object SparkStreamingKafkaLogProcessorDF {
     val spark = SparkSession
       .builder
       .appName("SparkStreamingKafkaLogProcessorDF")
-      .getOrCreate()
+      .getOrCreate() // recover session from checkpoint if necessary  
 
     import spark.implicits._
 
@@ -133,7 +133,7 @@ object SparkStreamingKafkaLogProcessorDF {
     // Convert our raw text into a DataSet of LogEntry rows, then just select the two columns we care about
     val structuredData = rawData.flatMap(parseLog).select("subnet", "dateTime")
 
-    // Group by subnet code, with a one-hour window.
+    // Group by subnet code, with a 2 second window.
     val windowed = structuredData
     .groupBy($"subnet",window($"dateTime", "2 second"))
     .count()
