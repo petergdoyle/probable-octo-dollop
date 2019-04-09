@@ -43,21 +43,24 @@ $ echo $PATH
 
 Recommended Setup is to use Vagrant and Virtualbox to set up a virtual machine provisioned with all the Prerequisites detailed above. More instructions [here](https://github.com/petergdoyle/probable-octo-dollop/blob/master/vagrant.md).
 
-**Create a Kafka Standalone Cluster** (using kafka-proxied scripts) and create topics as follows (pay attention the the required setup values shown below) and check the last output to make sure the cluster looks good (broker and zookeeper processes are running). See instructions [here](https://github.com/petergdoyle/probable-octo-dollop/blob/master/kafka.md)
+**Start a Kafka Standalone Cluster** (using kafka-proxied scripts) and create topics as follows (pay attention the the required setup values shown below) and check the last output to make sure the cluster looks good (broker and zookeeper processes are running). See instructions [here](https://github.com/petergdoyle/probable-octo-dollop/blob/master/kafka.md)
 
 **Start Spark Standalone Master and Worker Nodes**
 ```
-$ ./spark_standalone_start_master.sh && ./spark_standalone_start_worker.sh
+$ ./spark_standalone_standup.sh 
 ```
 
 **Submit the spark job to connect to Kafka, stream the messages, and look for abnormal behavior**
+
+Read Log files from disk and push into Kafka 
 ```
 $ ./spark_submit_scala_LogReaderKafkaProducer.sh
 ```
 
-**Submit the spark job to read a web log file and push those lines into Kafka**
+**Submit the spark job to intercept log messages on the kafka logs topic and write violations to disk **
 ```
-$ ./spark_submit_scala_SparkStreamingKafkaLogProcessor.sh
+$ ./spark_submit_scala_SparkStreamingKafkaLogProcessorRDD.sh // to run the RDD based version 
+$ ./spark_submit_scala_SparkStreamingKafkaLogProcessorDF.sh // to run the DataSet based version 
 ```
 **Check output for usage violations**
 ```

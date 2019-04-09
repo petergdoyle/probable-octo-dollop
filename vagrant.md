@@ -45,7 +45,7 @@ The error output from the command was:
 /sbin/mount.vboxsf: mounting failed with the error: No such device
 
 ```
-To reload the vm
+Reload the VM to make sure Virtualbox Guest Additions are rebuilt for the kernel and running ok 
 ```
 $ vagrant reload
 ```

@@ -1,8 +1,15 @@
 
 **Create Kafka Cluster**
+
+Install Kafka 10.2.1 
 ```
 $ cd kafka-proxied/install
-$ ./all_in_one_standup.sh
+$ ./install_kafka.sh 
+$ cd - 
+```
+Stand up a Cluster (Single Zookeeper, Single Kafka Broker, Single Topic)
+```
+$ ./kafka_cluster_standup.sh 
 [info] Kafka version is '0.10.2.1'.
 Enter the number of zookeeper instances: 1
 Enter the zookeeper host: localhost
@@ -61,4 +68,11 @@ $ ./kafka_check_status.sh
 943
 [warn] Mirror-Maker process(es) running: No Mirror-Maker processes running
 
+```
+
+**Teardown the Kafka Cluster**
+```
+$ ./kafka_cluster_teardown.sh 
+any zookeeper or kakfa processes will be shut down 
+answer yes to remove old log files... 
 ```
