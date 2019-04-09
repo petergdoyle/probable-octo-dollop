@@ -11,4 +11,5 @@ if find "$target" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then
   fi
 fi
 
-./spark_standalone_start_all.sh 
+./spark_standalone_start_master.sh
+./spark_standalone_start_worker.sh
