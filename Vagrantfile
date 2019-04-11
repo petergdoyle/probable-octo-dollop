@@ -151,11 +151,18 @@ EOF
       chmod ugo+rw "/spark/checkpoint/"
     fi
 
-    # spark nodes need a logs directory
+    # spark master need a logs directory
     if [ ! -d "/usr/spark/default/logs" ]; then
       mkdir -pv "/usr/spark/default/logs"
       chmod ugo+rw "/usr/spark/default/logs"
     fi
+
+    # spark workers need a work directory
+    if [ ! -d "/usr/spark/default/work" ]; then
+      mkdir -pv "/usr/spark/default/work"
+      chmod ugo+rw "/usr/spark/default/work"
+    fi
+
 
   else
     echo -e "spark-2.11 already appears to be installed. skipping."
