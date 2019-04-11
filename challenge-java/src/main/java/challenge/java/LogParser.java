@@ -24,7 +24,8 @@ public class LogParser implements Serializable {
             + "155.156.103.181 - - [25/May/2015:23:11:15 +0000] \"GET / HTTP/1.0\" 200 3557 \"-\" \"Opera/9.00 (Windows NT 5.1; U; en)\"\n"
             + "155.156.140.104 - - [25/May/2015:23:11:15 +0000] \"GET / HTTP/1.0\" 200 3557 \"-\" \"Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.8.1.8) Gecko/20071004 Iceweasel/2.0.0.8 (Debian-2.0.0.6+2.0.0.8-Oetch1)\"";
 
-    private final static String REGEX_PATTERN = "^(\\S+) (\\S+) (\\S+) "
+    // (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})? (\S+) (\S+) (\[.+?\]) "(.*?)" (\d{3}) (\S+) "(.*?)" "(.*?)"
+    private final static String REGEX_PATTERN = "^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})? "
             + "\\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+)"
             + " (\\S+)\\s*(\\S+)?\\s*\" (\\d{3}) (\\S+)";
     public static final int NUM_FIELDS = 9;
