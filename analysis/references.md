@@ -44,8 +44,8 @@ Unsupervised Anomaly Detection with Spark
 https://mapr.com/ebooks/spark/08-unsupervised-anomaly-detection-apache-spark.html  
 
 
-Supervised vs Unsupervised vs
-missing link
+Supervised vs Unsupervised vs Reinforced Learning  
+https://blogs.nvidia.com/blog/2018/08/02/supervised-unsupervised-learning/  
 
 
 ## Spark Streaming
